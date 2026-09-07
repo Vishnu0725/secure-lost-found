@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environment
+.venv/
+
+# Environment variables / secrets
+.env
+.env.*
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Private uploaded files
+private_uploads/
+
+# ML generated files
+*.pkl
+*.joblib
+*.pt
+*.pth
+
+# IDE
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
