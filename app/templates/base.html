@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}SecureFind{% endblock %}</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+</head>
+
+<body>
+
+    <div class="background">
+
+        <div class="orb orb-one"></div>
+        <div class="orb orb-two"></div>
+        <div class="grid"></div>
+
+    </div>
+
+    <nav class="navbar">
+
+        <a href="/" class="logo">
+
+            <span class="logo-icon">✦</span>
+
+            <span>
+                Secure<span class="logo-highlight">Find</span>
+            </span>
+
+        </a>
+
+        <div class="nav-links">
+
+            <a href="/">Home</a>
+
+            <a href="#how-it-works">
+                How It Works
+            </a>
+
+            <a href="#security">
+                Security
+            </a>
+
+        </div>
+
+        <div class="nav-actions">
+
+            {% if session.get("user_id") %}
+
+                <a
+                    href="{{ url_for('auth.dashboard') }}"
+                    class="login-btn"
+                >
+                    Dashboard
+                </a>
+
+                <form
+                    action="{{ url_for('auth.logout') }}"
+                    method="POST"
+                    style="display: inline;"
+                >
+
+                    <input
+                        type="hidden"
+                        name="csrf_token"
+                        value="{{ csrf_token() }}"
+                    >
+
+                    <button
+                        type="submit"
+                        class="nav-register"
+                        style="
+                            border: none;
+                            cursor: pointer;
+                            font: inherit;
+                        "
+                    >
+                        Logout <span>→</span>
+                    </button>
+
+                </form>
+
+            {% else %}
+
+                <a
+                    href="{{ url_for('auth.login') }}"
+                    class="login-btn"
+                >
+                    Login
+                </a>
+
+                <a
+                    href="{{ url_for('auth.register') }}"
+                    class="nav-register"
+                >
+                    Get Started <span>→</span>
+                </a>
+
+            {% endif %}
+
+        </div>
+
+    </nav>
+
+    <main>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+
+            {% if messages %}
+
+                <div class="flash-container">
+
+                    {% for category, message in messages %}
+
+                        <div class="flash-message {{ category }}">
+
+                            <span class="flash-icon">
+
+                                {% if category == "success" %}
+
+                                    ✓
+
+                                {% else %}
+
+                                    !
+
+                                {% endif %}
+
+                            </span>
+
+                            <span>
+                                {{ message }}
+                            </span>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% endif %}
+
+        {% endwith %}
+
+        {% block content %}
+
+        {% endblock %}
+
+    </main>
+
+</body>
+
+</html>

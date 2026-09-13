@@ -1,0 +1,423 @@
+{% extends "base.html" %}
+
+{% block title %}Potential Matches — SecureFind{% endblock %}
+
+{% block content %}
+
+<section class="matches-page">
+
+    <div class="matches-container">
+
+        <div class="matches-header">
+
+            <div>
+                <div class="matches-eyebrow">
+                    <span class="eyebrow-dot"></span>
+                    AI DISCOVERED CONNECTIONS
+                </div>
+
+                <h1>
+                    Potential
+                    <span>matches.</span>
+                </h1>
+
+                <p>
+                    SecureFind's matching engine found reports that
+                    may correspond to something you've lost.
+                    These are potential matches, not ownership decisions.
+                </p>
+            </div>
+
+            <div class="matches-security">
+                <span>🔒</span>
+
+                <div>
+                    <strong>Privacy Protected</strong>
+                    <small>Match access is account-controlled.</small>
+                </div>
+            </div>
+
+        </div>
+
+
+        {% if matches %}
+
+            <div class="matches-summary">
+
+                <div>
+                    <span class="section-label">
+                        MATCHES FOUND
+                    </span>
+
+                    <strong>
+                        {{ matches|length }}
+                    </strong>
+                </div>
+
+                <div class="match-summary-note">
+                    ✦ Ranked by AI confidence
+                </div>
+
+            </div>
+
+
+            <div class="matches-list">
+
+                {% for match in matches %}
+
+                    {% set claim_status = claim_statuses.get(match.id) %}
+
+                    <article class="match-card">
+
+                        <!-- MATCH HEADER -->
+
+                        <div class="match-card-top">
+
+                            <div class="match-score">
+
+                                <div class="score-ring">
+                                    <strong>
+                                        {{ "%.0f"|format(match.score) }}%
+                                    </strong>
+                                </div>
+
+                                <div>
+                                    <span>AI CONFIDENCE</span>
+
+                                    <h2>
+                                        Potential Match
+                                    </h2>
+                                </div>
+
+                            </div>
+
+
+                            {% if claim_status == "approved" %}
+
+                                <span class="potential-badge">
+                                    APPROVED
+                                </span>
+
+                            {% elif claim_status == "pending" %}
+
+                                <span class="potential-badge">
+                                    PENDING
+                                </span>
+
+                            {% elif claim_status == "rejected" %}
+
+                                <span class="potential-badge">
+                                    REJECTED
+                                </span>
+
+                            {% else %}
+
+                                <span class="potential-badge">
+                                    POTENTIAL
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <div class="match-divider"></div>
+
+
+                        <!-- MATCH DETAILS -->
+
+                        <div class="match-details">
+
+                            <div class="match-lost">
+
+                                <span class="match-label">
+                                    YOUR LOST ITEM
+                                </span>
+
+                                <h3>
+                                    {{ match.lost_item.item_name }}
+                                </h3>
+
+                                <p>
+                                    {{ match.lost_item.description }}
+                                </p>
+
+                                <div class="match-meta">
+
+                                    <span>
+                                        ◈ {{ match.lost_item.category }}
+                                    </span>
+
+                                    <span>
+                                        📍 {{ match.lost_item.location_lost }}
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="match-arrow">
+                                →
+                            </div>
+
+
+                            <div class="match-found">
+
+                                <span class="match-label">
+                                    POSSIBLE FOUND ITEM
+                                </span>
+
+                                <h3>
+                                    {{ match.found_item.item_name }}
+                                </h3>
+
+                                <p>
+                                    {{ match.found_item.description }}
+                                </p>
+
+                                <div class="match-meta">
+
+                                    <span>
+                                        ◈ {{ match.found_item.category }}
+                                    </span>
+
+                                    <span>
+                                        📍 {{ match.found_item.location_found }}
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- PRIVACY -->
+
+                        <div class="match-privacy">
+
+                            <span>🔒</span>
+
+                            <div>
+
+                                <strong>
+                                    Private item information
+                                </strong>
+
+                                <p>
+                                    The found item's image remains
+                                    protected and is never exposed
+                                    through a public URL.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- VERIFICATION -->
+
+                        <div class="match-verification">
+
+                            <div class="verification-text">
+
+                                <span class="match-label">
+                                    OWNERSHIP VERIFICATION
+                                </span>
+
+
+                                {% if claim_status is none %}
+
+                                    <h3>
+                                        Think this is your item?
+                                    </h3>
+
+                                    <p>
+                                        Send a verification request to the
+                                        person who found the item. The private
+                                        image will remain protected until the
+                                        request is approved.
+                                    </p>
+
+
+                                {% elif claim_status == "pending" %}
+
+                                    <h3>
+                                        Verification request sent.
+                                    </h3>
+
+                                    <p>
+                                        Your request is waiting for the finder
+                                        to review it. The private image remains
+                                        protected until the request is approved.
+                                    </p>
+
+
+                                {% elif claim_status == "approved" %}
+
+                                    <h3>
+                                        Verification approved ✓
+                                    </h3>
+
+                                    <p>
+                                        The finder approved your verification
+                                        request. You can now securely view the
+                                        private image associated with this item.
+                                    </p>
+
+
+                                {% elif claim_status == "rejected" %}
+
+                                    <h3>
+                                        Verification request rejected.
+                                    </h3>
+
+                                    <p>
+                                        The finder did not approve this
+                                        verification request.
+                                    </p>
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <!-- NO REQUEST YET -->
+
+                            {% if claim_status is none %}
+
+                                <form
+                                    method="POST"
+                                    action="{{ url_for(
+                                        'matches.request_claim',
+                                        match_id=match.id
+                                    ) }}"
+                                >
+
+                                    <!-- CSRF PROTECTION -->
+                                    <input
+                                        type="hidden"
+                                        name="csrf_token"
+                                        value="{{ csrf_token() }}"
+                                    >
+
+                                    <button
+                                        type="submit"
+                                        class="verification-button"
+                                    >
+                                        Request Verification
+                                        <span>→</span>
+                                    </button>
+
+                                </form>
+
+
+                            <!-- REQUEST PENDING -->
+
+                            {% elif claim_status == "pending" %}
+
+                                <div class="verification-status pending-status">
+
+                                    <span>◷</span>
+
+                                    Awaiting Finder Approval
+
+                                </div>
+
+
+                            <!-- REQUEST APPROVED -->
+
+                            {% elif claim_status == "approved" %}
+
+                                <a
+                                    href="{{ url_for(
+                                        'found.private_image',
+                                        filename=match.found_item.image_path
+                                    ) }}"
+                                    target="_blank"
+                                    class="verification-button"
+                                >
+                                    View Private Image
+                                    <span>↗</span>
+                                </a>
+
+
+                            <!-- REQUEST REJECTED -->
+
+                            {% elif claim_status == "rejected" %}
+
+                                <div class="verification-status rejected-status">
+
+                                    <span>✕</span>
+
+                                    Request Rejected
+
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+                    </article>
+
+                {% endfor %}
+
+            </div>
+
+
+        {% else %}
+
+            <div class="matches-empty">
+
+                <div class="empty-icon">
+                    ✦
+                </div>
+
+                <h2>
+                    No potential matches yet.
+                </h2>
+
+                <p>
+                    When SecureFind discovers a possible connection
+                    between your lost report and a found item,
+                    it will appear here.
+                </p>
+
+                <a
+                    href="{{ url_for('auth.dashboard') }}"
+                    class="matches-empty-button"
+                >
+                    ← Back to Dashboard
+                </a>
+
+            </div>
+
+        {% endif %}
+
+
+        <!-- BOTTOM LINKS -->
+
+        <div class="matches-bottom">
+
+            <a
+                href="{{ url_for('auth.dashboard') }}"
+                class="matches-back"
+            >
+                ← Back to Dashboard
+            </a>
+
+            <a
+                href="{{ url_for('reports.my_reports') }}"
+                class="matches-reports"
+            >
+                My Reports →
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

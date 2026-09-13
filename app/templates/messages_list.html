@@ -1,0 +1,258 @@
+{% extends "base.html" %}
+
+{% block title %}Messages — SecureFind{% endblock %}
+
+{% block content %}
+
+<section class="matches-page">
+
+    <div class="matches-container">
+
+        <!-- HEADER -->
+        <div class="matches-header">
+
+            <div>
+
+                <div class="matches-eyebrow">
+                    <span class="eyebrow-dot"></span>
+                    SECURE MESSAGES
+                </div>
+
+                <h1>
+                    Your
+                    <span>conversations.</span>
+                </h1>
+
+                <p>
+                    Communicate securely with people involved in
+                    your verified lost-and-found connections.
+                </p>
+
+            </div>
+
+
+            <div class="matches-security">
+
+                <span>🔒</span>
+
+                <div>
+                    <strong>Private Conversations</strong>
+
+                    <small>
+                        Only verified participants can access messages.
+                    </small>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        {% if conversations %}
+
+            <!-- SUMMARY -->
+            <div class="matches-summary">
+
+                <div>
+
+                    <span class="section-label">
+                        ACTIVE CONVERSATIONS
+                    </span>
+
+                    <strong>
+                        {{ conversations|length }}
+                    </strong>
+
+                </div>
+
+                <div class="match-summary-note">
+                    ✦ Verification approved
+                </div>
+
+            </div>
+
+
+            <!-- CONVERSATIONS -->
+            <div class="matches-list">
+
+                {% for conversation in conversations %}
+
+                    <article class="match-card">
+
+                        <div class="match-card-top">
+
+                            <div class="match-score">
+
+                                <div class="score-ring">
+                                    <strong>
+                                        💬
+                                    </strong>
+                                </div>
+
+                                <div>
+
+                                    <span>
+                                        VERIFIED CONVERSATION
+                                    </span>
+
+                                    <h2>
+                                        {{ conversation.match.found_item.item_name }}
+                                    </h2>
+
+                                </div>
+
+                            </div>
+
+
+                            <span class="potential-badge">
+                                APPROVED
+                            </span>
+
+                        </div>
+
+
+                        <div class="match-divider"></div>
+
+
+                        <div class="match-details">
+
+                            <div class="match-lost">
+
+                                <span class="match-label">
+                                    CLAIMANT
+                                </span>
+
+                                <h3>
+                                    {{ conversation.claimant.name }}
+                                </h3>
+
+                                <p>
+                                    Person who reported the item as lost.
+                                </p>
+
+                            </div>
+
+
+                            <div class="match-arrow">
+                                ↔
+                            </div>
+
+
+                            <div class="match-found">
+
+                                <span class="match-label">
+                                    FINDER
+                                </span>
+
+                                <h3>
+                                    {{ conversation.finder.name }}
+                                </h3>
+
+                                <p>
+                                    Person who reported finding the item.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="match-privacy">
+
+                            <span>🔐</span>
+
+                            <div>
+
+                                <strong>
+                                    Private conversation
+                                </strong>
+
+                                <p>
+                                    Only the claimant and finder
+                                    associated with this approved
+                                    verification request can access
+                                    these messages.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="request-actions">
+
+                            <a
+                                href="{{
+                                    url_for(
+                                        'claim.messages',
+                                        request_id=conversation.id
+                                    )
+                                }}"
+                                class="request-approve"
+                            >
+                                💬 Open Conversation
+                            </a>
+
+                        </div>
+
+                    </article>
+
+                {% endfor %}
+
+            </div>
+
+
+        {% else %}
+
+            <!-- EMPTY STATE -->
+            <div class="matches-empty">
+
+                <div class="empty-icon">
+                    💬
+                </div>
+
+                <h2>
+                    No conversations yet.
+                </h2>
+
+                <p>
+                    Once a verification request is approved,
+                    your secure conversation will appear here.
+                </p>
+
+                <a
+                    href="{{ url_for('auth.dashboard') }}"
+                    class="matches-empty-button"
+                >
+                    ← Back to Dashboard
+                </a>
+
+            </div>
+
+        {% endif %}
+
+
+        <!-- BOTTOM NAVIGATION -->
+        <div class="matches-bottom">
+
+            <a
+                href="{{ url_for('auth.dashboard') }}"
+                class="matches-back"
+            >
+                ← Back to Dashboard
+            </a>
+
+            <a
+                href="{{ url_for('reports.my_reports') }}"
+                class="matches-reports"
+            >
+                My Reports →
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

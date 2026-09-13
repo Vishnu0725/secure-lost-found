@@ -1,0 +1,334 @@
+{% extends "base.html" %}
+
+{% block title %}Verification Requests — SecureFind{% endblock %}
+
+{% block content %}
+
+<section class="matches-page">
+
+    <div class="matches-container">
+
+        <div class="matches-header">
+
+            <div>
+                <div class="matches-eyebrow">
+                    <span class="eyebrow-dot"></span>
+                    INCOMING REQUESTS
+                </div>
+
+                <h1>
+                    Verification
+                    <span>requests.</span>
+                </h1>
+
+                <p>
+                    People who believe they may have lost an item
+                    you've found can request verification here.
+                    Review each request before granting private access.
+                </p>
+            </div>
+
+            <div class="matches-security">
+                <span>🔒</span>
+
+                <div>
+                    <strong>Privacy Protected</strong>
+                    <small>
+                        Private item information stays protected.
+                    </small>
+                </div>
+            </div>
+
+        </div>
+
+
+        {% if requests %}
+
+            <div class="matches-summary">
+
+                <div>
+                    <span class="section-label">
+                        REQUESTS RECEIVED
+                    </span>
+
+                    <strong>
+                        {{ requests|length }}
+                    </strong>
+                </div>
+
+                <div class="match-summary-note">
+                    ✦ Review before revealing private information
+                </div>
+
+            </div>
+
+
+            <div class="matches-list">
+
+                {% for request in requests %}
+
+                    <article class="match-card">
+
+                        <div class="match-card-top">
+
+                            <div class="match-score">
+
+                                <div class="score-ring">
+                                    <strong>
+                                        {{ "%.0f"|format(
+                                            request.match.score
+                                        ) }}%
+                                    </strong>
+                                </div>
+
+                                <div>
+                                    <span>AI CONFIDENCE</span>
+
+                                    <h2>
+                                        Verification Request
+                                    </h2>
+                                </div>
+
+                            </div>
+
+
+                            {% if request.status == "pending" %}
+
+                                <span class="potential-badge">
+                                    PENDING
+                                </span>
+
+                            {% elif request.status == "approved" %}
+
+                                <span class="potential-badge">
+                                    APPROVED
+                                </span>
+
+                            {% else %}
+
+                                <span class="potential-badge">
+                                    REJECTED
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <div class="match-divider"></div>
+
+
+                        <div class="match-details">
+
+                            <div class="match-lost">
+
+                                <span class="match-label">
+                                    CLAIMANT
+                                </span>
+
+                                <h3>
+                                    {{ request.claimant.name }}
+                                </h3>
+
+                                <p>
+                                    This person reported a lost item
+                                    that SecureFind identified as a
+                                    potential match.
+                                </p>
+
+                            </div>
+
+
+                            <div class="match-arrow">
+                                →
+                            </div>
+
+
+                            <div class="match-found">
+
+                                <span class="match-label">
+                                    YOUR FOUND ITEM
+                                </span>
+
+                                <h3>
+                                    {{ request.match.found_item.item_name }}
+                                </h3>
+
+                                <p>
+                                    {{ request.match.found_item.description }}
+                                </p>
+
+                                <div class="match-meta">
+
+                                    <span>
+                                        ◈
+                                        {{ request.match.found_item.category }}
+                                    </span>
+
+                                    <span>
+                                        📍
+                                        {{ request.match.found_item.location_found }}
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="match-privacy">
+
+                            <span>🔒</span>
+
+                            <div>
+                                <strong>
+                                    Private image remains protected
+                                </strong>
+
+                                <p>
+                                    Approving this request does not make
+                                    the image public. SecureFind will only
+                                    allow authorized access.
+                                </p>
+                            </div>
+
+                        </div>
+
+
+                        {% if request.status == "pending" %}
+
+                            <div class="request-actions">
+
+                                <form
+                                    method="POST"
+                                    action="{{
+                                        url_for(
+                                            'matches.approve_request',
+                                            claim_id=request.id
+                                        )
+                                    }}"
+                                >
+
+                                    <!-- CSRF PROTECTION -->
+                                    <input
+                                        type="hidden"
+                                        name="csrf_token"
+                                        value="{{ csrf_token() }}"
+                                    >
+
+                                    <button
+                                        type="submit"
+                                        class="request-approve"
+                                    >
+                                        ✓ Approve Request
+                                    </button>
+
+                                </form>
+
+
+                                <form
+                                    method="POST"
+                                    action="{{
+                                        url_for(
+                                            'matches.reject_request',
+                                            claim_id=request.id
+                                        )
+                                    }}"
+                                >
+
+                                    <!-- CSRF PROTECTION -->
+                                    <input
+                                        type="hidden"
+                                        name="csrf_token"
+                                        value="{{ csrf_token() }}"
+                                    >
+
+                                    <button
+                                        type="submit"
+                                        class="request-reject"
+                                    >
+                                        ✕ Reject
+                                    </button>
+
+                                </form>
+
+                            </div>
+
+
+                        {% elif request.status == "approved" %}
+
+                            <div class="request-actions">
+
+                                <a
+                                    href="{{
+                                        url_for(
+                                            'claim.messages',
+                                            request_id=request.id
+                                        )
+                                    }}"
+                                    class="request-approve"
+                                >
+                                    💬 Message Claimant
+                                </a>
+
+                            </div>
+
+                        {% endif %}
+
+                    </article>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="matches-empty">
+
+                <div class="empty-icon">✦</div>
+
+                <h2>
+                    No verification requests yet.
+                </h2>
+
+                <p>
+                    When someone requests verification for an item
+                    you've found, their request will appear here.
+                </p>
+
+                <a
+                    href="{{ url_for('auth.dashboard') }}"
+                    class="matches-empty-button"
+                >
+                    ← Back to Dashboard
+                </a>
+
+            </div>
+
+        {% endif %}
+
+
+        <div class="matches-bottom">
+
+            <a
+                href="{{ url_for('auth.dashboard') }}"
+                class="matches-back"
+            >
+                ← Back to Dashboard
+            </a>
+
+            <a
+                href="{{ url_for('reports.my_reports') }}"
+                class="matches-reports"
+            >
+                My Reports →
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

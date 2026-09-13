@@ -1,0 +1,295 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard — SecureFind{% endblock %}
+
+{% block content %}
+
+<section class="dashboard-page">
+
+    <!-- HERO -->
+    <div class="dashboard-container">
+
+        <div class="dashboard-hero">
+
+            <div class="dashboard-welcome">
+
+                <div class="dashboard-eyebrow">
+                    <span class="eyebrow-dot"></span>
+                    SECUREFIND DASHBOARD
+                </div>
+
+                <h1>
+                    Hello, {{ user_name }} 👋
+                    <span>Let's find what's missing.</span>
+                </h1>
+
+                <p>
+                    Manage your lost and found reports, track potential
+                    matches and reconnect belongings securely.
+                </p>
+
+            </div>
+
+            <div class="dashboard-status">
+
+                <div class="status-dot"></div>
+
+                <div>
+                    <strong>System Active</strong>
+                    <small>AI matching is ready</small>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ACTION CARDS -->
+        <div class="dashboard-actions">
+
+            <a href="{{ url_for('lost.report_lost') }}"
+               class="dashboard-action lost-action">
+
+                <div class="action-icon">
+                    +
+                </div>
+
+                <div class="action-content">
+                    <span class="action-label">REPORT SOMETHING</span>
+
+                    <h2>Lost an item?</h2>
+
+                    <p>
+                        Tell SecureFind what you lost and let our
+                        matching engine search for possible connections.
+                    </p>
+                </div>
+
+                <span class="action-arrow">→</span>
+
+            </a>
+
+
+            <a href="{{ url_for('found.report_found') }}"
+               class="dashboard-action found-action">
+
+                <div class="action-icon">
+                    ✦
+                </div>
+
+                <div class="action-content">
+                    <span class="action-label">HELP SOMEONE</span>
+
+                    <h2>Found an item?</h2>
+
+                    <p>
+                        Report something you've found and help return
+                        it to its rightful owner.
+                    </p>
+                </div>
+
+                <span class="action-arrow">→</span>
+
+            </a>
+
+        </div>
+
+
+        <!-- STATISTICS -->
+        <div class="dashboard-section-heading">
+
+            <div>
+                <span class="section-label">YOUR ACTIVITY</span>
+
+                <h2>
+                    Everything in
+                    <span>one place.</span>
+                </h2>
+            </div>
+
+        </div>
+
+
+        <div class="dashboard-stats">
+
+            <div class="dashboard-stat">
+
+                <div class="stat-top">
+                    <span class="stat-icon">◈</span>
+                    <span class="stat-number">01</span>
+                </div>
+
+                <strong>{{ lost_reports_count }}</strong>
+
+                <h3>Lost Reports</h3>
+
+                <p>
+                    Items you've reported as lost.
+                </p>
+
+            </div>
+
+
+            <div class="dashboard-stat">
+
+                <div class="stat-top">
+                    <span class="stat-icon purple-stat">✦</span>
+                    <span class="stat-number">02</span>
+                </div>
+
+                <strong>{{ found_reports_count }}</strong>
+
+                <h3>Found Reports</h3>
+
+                <p>
+                    Items you've reported as found.
+                </p>
+
+            </div>
+
+
+            <a href="{{ url_for('matches.potential_matches') }}"
+               class="dashboard-stat">
+
+                <div class="stat-top">
+                    <span class="stat-icon green-stat">✓</span>
+                    <span class="stat-number">03</span>
+                </div>
+
+                <strong>{{ potential_matches_count }}</strong>
+
+                <h3>Potential Matches</h3>
+
+                <p>
+                    AI-discovered connections.
+                </p>
+
+            </a>
+
+        </div>
+
+
+        <!-- SECURITY PANEL -->
+        <div class="dashboard-security">
+
+            <div class="security-content">
+
+                <div class="security-icon">
+                    🔒
+                </div>
+
+                <div>
+
+                    <span class="action-label">
+                        PRIVACY-FIRST SECURITY
+                    </span>
+
+                    <h2>
+                        Your information stays protected.
+                    </h2>
+
+                    <p>
+                        SecureFind is designed so sensitive item information
+                        isn't unnecessarily exposed. Verification happens
+                        before private details are revealed.
+                    </p>
+
+                </div>
+
+            </div>
+
+            <div class="security-badges">
+
+                <span>🔒 Secure Authentication</span>
+                <span>✦ AI Matching</span>
+                <span>✓ Verified Claims</span>
+
+            </div>
+
+        </div>
+
+
+        <!-- QUICK LINKS -->
+        <div class="dashboard-bottom">
+
+            <div>
+                <span class="section-label">QUICK ACCESS</span>
+
+                <h2>
+                    What would you like to do?
+                </h2>
+            </div>
+
+            <div class="quick-links">
+
+                <a href="{{ url_for('reports.my_reports') }}"
+                   class="quick-link">
+                    <span>◈</span>
+                    My Reports
+                </a>
+
+
+                {% if pending_requests_count > 0 %}
+
+                    <a href="{{ url_for('matches.incoming_requests') }}"
+                       class="quick-link">
+                        <span>🔔</span>
+                        Incoming Requests ({{ pending_requests_count }})
+                    </a>
+
+                {% endif %}
+
+
+                <!-- MESSAGES -->
+
+                <a href="{{ url_for('auth.messages') }}"
+                   class="quick-link">
+
+                    <span>💬</span>
+
+                    {% if unread_messages_count > 0 %}
+                        Messages ({{ unread_messages_count }})
+                    {% else %}
+                        Messages
+                    {% endif %}
+
+                </a>
+
+
+                <a href="/"
+                   class="quick-link">
+                    <span>←</span>
+                    Back to Home
+                </a>
+
+
+                <!-- SECURE LOGOUT -->
+
+                <form action="{{ url_for('auth.logout') }}"
+                      method="POST"
+                      style="display: inline;">
+
+                    <input type="hidden"
+                           name="csrf_token"
+                           value="{{ csrf_token() }}">
+
+                    <button type="submit"
+                            class="quick-link logout-link"
+                            style="border: none; cursor: pointer; font: inherit;">
+
+                        <span>↗</span>
+                        Logout
+
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

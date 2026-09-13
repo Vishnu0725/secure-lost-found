@@ -1,0 +1,357 @@
+{% extends "base.html" %}
+
+{% block title %}Report Lost Item — SecureFind{% endblock %}
+
+{% block content %}
+
+<section class="report-page">
+
+    <div class="report-container">
+
+        <!-- HEADER -->
+
+        <div class="report-header">
+
+            <div class="report-eyebrow">
+                <span></span>
+                REPORT LOST ITEM
+            </div>
+
+            <h1>
+                Tell us what you
+                <span>lost.</span>
+            </h1>
+
+            <p>
+                Give us as much information as possible. SecureFind
+                will use these details later to intelligently match
+                your report with found items.
+            </p>
+
+        </div>
+
+
+        <!-- FORM CARD -->
+
+        <div class="report-card">
+
+            <div class="report-card-header">
+
+                <div>
+                    <span class="card-label">
+                        LOST ITEM DETAILS
+                    </span>
+
+                    <h2>
+                        What did you lose?
+                    </h2>
+                </div>
+
+                <div class="step-indicator">
+                    01 / 01
+                </div>
+
+            </div>
+
+
+            <!-- FLASH MESSAGES -->
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+
+                {% if messages %}
+
+                    {% for category, message in messages %}
+
+                        <div class="report-message {{ category }}">
+                            {{ message }}
+                        </div>
+
+                    {% endfor %}
+
+                {% endif %}
+
+            {% endwith %}
+
+
+            <form
+                method="POST"
+                action="{{ url_for('lost.report_lost') }}"
+                class="report-form"
+            >
+
+                <!-- CSRF PROTECTION -->
+
+                <input
+                    type="hidden"
+                    name="csrf_token"
+                    value="{{ csrf_token() }}"
+                >
+
+
+                <!-- ITEM NAME -->
+
+                <div class="report-field">
+
+                    <label for="item_name">
+                        Item Name
+                        <span>*</span>
+                    </label>
+
+                    <input
+                        type="text"
+                        id="item_name"
+                        name="item_name"
+                        placeholder="e.g. Black Leather Wallet"
+                        maxlength="100"
+                        required
+                    >
+
+                    <small>
+                        Give your item a simple, recognizable name.
+                    </small>
+
+                </div>
+
+
+                <!-- CATEGORY -->
+
+                <div class="report-field">
+
+                    <label for="category">
+                        Category
+                        <span>*</span>
+                    </label>
+
+                    <select
+                        id="category"
+                        name="category"
+                        required
+                    >
+
+                        <option value="" disabled selected>
+                            Select an item category
+                        </option>
+
+                        <option value="Electronics">
+                            Electronics
+                        </option>
+
+                        <option value="Wallet">
+                            Wallet / Purse
+                        </option>
+
+                        <option value="Keys">
+                            Keys
+                        </option>
+
+                        <option value="Documents">
+                            Documents / ID
+                        </option>
+
+                        <option value="Bag">
+                            Bag / Backpack
+                        </option>
+
+                        <option value="Jewellery">
+                            Jewellery
+                        </option>
+
+                        <option value="Clothing">
+                            Clothing
+                        </option>
+
+                        <option value="Accessories">
+                            Accessories
+                        </option>
+
+                        <option value="Other">
+                            Other
+                        </option>
+
+                    </select>
+
+                    <small>
+                        This helps SecureFind narrow down potential matches.
+                    </small>
+
+                </div>
+
+
+                <!-- DESCRIPTION -->
+
+                <div class="report-field">
+
+                    <label for="description">
+                        Description
+                        <span>*</span>
+                    </label>
+
+                    <textarea
+                        id="description"
+                        name="description"
+                        rows="6"
+                        maxlength="1000"
+                        placeholder="Describe the item in detail — colour, brand, model, unique marks, stickers, scratches, contents, or anything that could help identify it."
+                        required
+                    ></textarea>
+
+                    <small>
+                        Unique details are especially useful for matching.
+                    </small>
+
+                </div>
+
+
+                <!-- LOCATION -->
+
+                <div class="report-two-columns">
+
+                    <div class="report-field">
+
+                        <label for="location_lost">
+                            Where did you lose it?
+                            <span>*</span>
+                        </label>
+
+                        <input
+                            type="text"
+                            id="location_lost"
+                            name="location_lost"
+                            placeholder="e.g. College Library"
+                            maxlength="200"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- DATE -->
+
+                    <div class="report-field">
+
+                        <label for="date_lost">
+                            Date Lost
+                            <span>*</span>
+                        </label>
+
+                        <input
+                            type="date"
+                            id="date_lost"
+                            name="date_lost"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <!-- PRIVACY NOTICE -->
+
+                <div class="report-privacy">
+
+                    <div class="privacy-symbol">
+                        🔒
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            Your report is private
+                        </strong>
+
+                        <p>
+                            Your lost-item details aren't publicly
+                            displayed. SecureFind uses them to search
+                            for potential matches.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ACTIONS -->
+
+                <div class="report-actions">
+
+                    <a
+                        href="{{ url_for('auth.dashboard') }}"
+                        class="report-cancel"
+                    >
+                        ← Back to Dashboard
+                    </a>
+
+                    <button
+                        type="submit"
+                        class="report-submit"
+                    >
+                        Submit Lost Report
+                        <span>→</span>
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+
+        <!-- BOTTOM INFO -->
+
+        <div class="report-info-grid">
+
+            <div class="report-info">
+
+                <span class="info-icon">✦</span>
+
+                <div>
+                    <strong>AI Matching</strong>
+
+                    <p>
+                        Your description will become part of the
+                        information used by our future matching engine.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="report-info">
+
+                <span class="info-icon">🔒</span>
+
+                <div>
+                    <strong>Privacy First</strong>
+
+                    <p>
+                        We don't need a public photo of your lost item
+                        to begin searching for a match.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="report-info">
+
+                <span class="info-icon">✓</span>
+
+                <div>
+                    <strong>Secure Claims</strong>
+
+                    <p>
+                        Potential matches will eventually go through
+                        an ownership verification process.
+                    </p>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

@@ -1,0 +1,256 @@
+{% extends "base.html" %}
+
+{% block title %}My Reports — SecureFind{% endblock %}
+
+{% block content %}
+
+<section class="reports-page">
+
+    <div class="reports-container">
+
+        <div class="reports-header">
+
+            <div>
+                <div class="reports-eyebrow">
+                    <span class="eyebrow-dot"></span>
+                    MY SECUREFIND REPORTS
+                </div>
+
+                <h1>
+                    Your reports,
+                    <span>in one place.</span>
+                </h1>
+
+                <p>
+                    View the items you've reported as lost or found.
+                    Your reports remain private to your account.
+                </p>
+            </div>
+
+            <div class="reports-header-badge">
+                🔒
+                <div>
+                    <strong>Private Account Area</strong>
+                    <small>Only you can access your reports.</small>
+                </div>
+            </div>
+
+        </div>
+
+
+        <!-- LOST REPORTS -->
+
+        <div class="reports-section">
+
+            <div class="reports-section-heading">
+                <div>
+                    <span class="section-label">LOST ITEMS</span>
+                    <h2>Things you've <span>lost.</span></h2>
+                </div>
+
+                <span class="reports-count">
+                    {{ lost_reports|length }}
+                </span>
+            </div>
+
+
+            {% if lost_reports %}
+
+                <div class="report-list">
+
+                    {% for item in lost_reports %}
+
+                        <div class="report-item">
+
+                            <div class="report-item-icon">
+                                ◈
+                            </div>
+
+                            <div class="report-item-content">
+
+                                <div class="report-item-top">
+                                    <span class="report-category">
+                                        {{ item.category }}
+                                    </span>
+
+                                    <span class="report-status lost-status">
+                                        LOST
+                                    </span>
+                                </div>
+
+                                <h3>{{ item.item_name }}</h3>
+
+                                <p>
+                                    {{ item.description }}
+                                </p>
+
+                                <div class="report-meta">
+                                    <span>
+                                        📍 {{ item.location_lost }}
+                                    </span>
+
+                                    <span>
+                                        📅 {{ item.date_lost.strftime("%d %b %Y") }}
+                                    </span>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+
+                <div class="reports-empty">
+                    <div>◈</div>
+                    <h3>No lost reports yet.</h3>
+                    <p>
+                        If you've lost something, report it so
+                        SecureFind can search for potential matches.
+                    </p>
+
+                    <a
+                        href="{{ url_for('lost.report_lost') }}"
+                        class="reports-empty-button"
+                    >
+                        Report Lost Item →
+                    </a>
+                </div>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- FOUND REPORTS -->
+
+        <div class="reports-section">
+
+            <div class="reports-section-heading">
+                <div>
+                    <span class="section-label">FOUND ITEMS</span>
+                    <h2>Things you've <span>found.</span></h2>
+                </div>
+
+                <span class="reports-count purple-count">
+                    {{ found_reports|length }}
+                </span>
+            </div>
+
+
+            {% if found_reports %}
+
+                <div class="report-list">
+
+                    {% for item in found_reports %}
+
+                        <div class="report-item found-report-item">
+
+                            <div class="report-item-image">
+
+                                <img
+                                    src="{{ url_for('found.private_image', filename=item.image_path) }}"
+                                    alt="Private image of {{ item.item_name }}"
+                                >
+
+                                <span class="private-image-label">
+                                    🔒 PRIVATE
+                                </span>
+
+                            </div>
+
+
+                            <div class="report-item-content">
+
+                                <div class="report-item-top">
+
+                                    <span class="report-category">
+                                        {{ item.category }}
+                                    </span>
+
+                                    <span class="report-status found-status">
+                                        FOUND
+                                    </span>
+
+                                </div>
+
+                                <h3>{{ item.item_name }}</h3>
+
+                                <p>
+                                    {{ item.description }}
+                                </p>
+
+                                <div class="report-meta">
+
+                                    <span>
+                                        📍 {{ item.location_found }}
+                                    </span>
+
+                                    <span>
+                                        📅 {{ item.date_found.strftime("%d %b %Y") }}
+                                    </span>
+
+                                </div>
+
+                                <div class="report-private-note">
+                                    🔐 This image is served through
+                                    SecureFind's protected access route.
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+
+                <div class="reports-empty">
+                    <div>✦</div>
+                    <h3>No found reports yet.</h3>
+                    <p>
+                        Found something? Report it and help return
+                        it to its rightful owner.
+                    </p>
+
+                    <a
+                        href="{{ url_for('found.report_found') }}"
+                        class="reports-empty-button"
+                    >
+                        Report Found Item →
+                    </a>
+                </div>
+
+            {% endif %}
+
+        </div>
+
+
+        <div class="reports-bottom">
+
+            <a
+                href="{{ url_for('auth.dashboard') }}"
+                class="reports-back"
+            >
+                ← Back to Dashboard
+            </a>
+
+            <a
+                href="{{ url_for('auth.logout') }}"
+                class="reports-logout"
+            >
+                Logout →
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

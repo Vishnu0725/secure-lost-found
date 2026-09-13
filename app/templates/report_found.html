@@ -1,0 +1,239 @@
+{% extends "base.html" %}
+
+{% block title %}Report Found Item — SecureFind{% endblock %}
+
+{% block content %}
+
+<section class="report-page">
+
+    <div class="report-container">
+
+        <div class="report-header">
+            <div>
+                <div class="report-eyebrow">
+                    <span class="eyebrow-dot"></span>
+                    FOUND ITEM REPORT
+                </div>
+
+                <h1>
+                    Help return
+                    <span>what you found.</span>
+                </h1>
+
+                <p>
+                    Provide the details of the item you found.
+                    SecureFind will use this information to help
+                    identify its rightful owner.
+                </p>
+            </div>
+
+            <div class="report-header-badge">
+                <span>🔒</span>
+                <div>
+                    <strong>Private by Design</strong>
+                    <small>Found item images are never public.</small>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="report-card">
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="report-message {{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <form method="POST" enctype="multipart/form-data" class="report-form">
+
+                <!-- CSRF PROTECTION -->
+                <input
+                    type="hidden"
+                    name="csrf_token"
+                    value="{{ csrf_token() }}"
+                >
+
+
+                <div class="report-field">
+                    <label for="item_name">What did you find?</label>
+
+                    <input
+                        type="text"
+                        id="item_name"
+                        name="item_name"
+                        placeholder="e.g. Black leather wallet"
+                        required
+                    >
+                </div>
+
+
+                <div class="report-field">
+                    <label for="category">Category</label>
+
+                    <select id="category" name="category" required>
+                        <option value="">Select a category</option>
+                        <option value="Wallet">Wallet</option>
+                        <option value="Phone">Phone</option>
+                        <option value="Laptop">Laptop</option>
+                        <option value="Bag">Bag</option>
+                        <option value="Keys">Keys</option>
+                        <option value="ID / Card">ID / Card</option>
+                        <option value="Jewelry">Jewelry</option>
+                        <option value="Electronics">Electronics</option>
+                        <option value="Documents">Documents</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+
+                <div class="report-field">
+                    <label for="description">Describe the item</label>
+
+                    <textarea
+                        id="description"
+                        name="description"
+                        rows="6"
+                        placeholder="Include useful details such as color, brand, markings, scratches or other identifying features..."
+                        required
+                    ></textarea>
+
+                    <small>
+                        Don't include sensitive information that shouldn't be publicly exposed.
+                    </small>
+                </div>
+
+
+                <div class="report-field">
+                    <label for="image">Photo of the found item</label>
+
+                    <input
+                        type="file"
+                        id="image"
+                        name="image"
+                        accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+                        required
+                    >
+
+                    <small>
+                        Upload a clear photo. Maximum size: 5 MB.
+                        JPG, PNG and WEBP are supported.
+                    </small>
+                </div>
+
+
+                <div class="report-two-columns">
+
+                    <div class="report-field">
+                        <label for="location_found">Where did you find it?</label>
+
+                        <input
+                            type="text"
+                            id="location_found"
+                            name="location_found"
+                            placeholder="e.g. College library"
+                            required
+                        >
+                    </div>
+
+
+                    <div class="report-field">
+                        <label for="date_found">When did you find it?</label>
+
+                        <input
+                            type="date"
+                            id="date_found"
+                            name="date_found"
+                            required
+                        >
+                    </div>
+
+                </div>
+
+
+                <div class="report-privacy">
+
+                    <div class="privacy-icon">🔐</div>
+
+                    <div>
+                        <strong>Your found-item image will remain private.</strong>
+
+                        <p>
+                            SecureFind will store the image in protected storage.
+                            It will not be placed in a publicly accessible folder.
+                            Access will be controlled by the application.
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <div class="report-actions">
+
+                    <a
+                        href="{{ url_for('auth.dashboard') }}"
+                        class="report-back"
+                    >
+                        ← Back to Dashboard
+                    </a>
+
+                    <button type="submit" class="report-submit">
+                        Continue Report
+                        <span>→</span>
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+
+        <div class="report-info-grid">
+
+            <div class="report-info-card">
+                <span>✦</span>
+                <div>
+                    <strong>AI Matching</strong>
+                    <p>
+                        Your report can later be compared with
+                        lost-item reports.
+                    </p>
+                </div>
+            </div>
+
+
+            <div class="report-info-card">
+                <span>🔒</span>
+                <div>
+                    <strong>Private Image</strong>
+                    <p>
+                        Images are protected instead of being
+                        publicly displayed.
+                    </p>
+                </div>
+            </div>
+
+
+            <div class="report-info-card">
+                <span>✓</span>
+                <div>
+                    <strong>Secure Claims</strong>
+                    <p>
+                        Potential owners must go through
+                        verification before access is granted.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

@@ -1,0 +1,301 @@
+{% extends "base.html" %}
+
+{% block title %}Secure Conversation — SecureFind{% endblock %}
+
+{% block content %}
+
+<section class="matches-page">
+
+    <div class="matches-container">
+
+        <!-- HEADER -->
+        <div class="matches-header">
+
+            <div>
+                <div class="matches-eyebrow">
+                    <span class="eyebrow-dot"></span>
+                    SECURE CONVERSATION
+                </div>
+
+                <h1>
+                    Talk
+                    <span>securely.</span>
+                </h1>
+
+                <p>
+                    This private conversation is available only to
+                    the verified claimant and the person who found
+                    the item.
+                </p>
+            </div>
+
+            <div class="matches-security">
+                <span>🔒</span>
+
+                <div>
+                    <strong>Private Channel</strong>
+                    <small>
+                        Only authorized participants can access
+                        these messages.
+                    </small>
+                </div>
+            </div>
+
+        </div>
+
+
+        <!-- CONVERSATION CARD -->
+        <article class="match-card">
+
+            <!-- CONVERSATION INFO -->
+            <div class="match-card-top">
+
+                <div class="match-score">
+
+                    <div class="score-ring">
+                        <strong>
+                            ✓
+                        </strong>
+                    </div>
+
+                    <div>
+                        <span>VERIFICATION APPROVED</span>
+
+                        <h2>
+                            {{ claim_request.match.found_item.item_name }}
+                        </h2>
+                    </div>
+
+                </div>
+
+                <span class="potential-badge">
+                    SECURE
+                </span>
+
+            </div>
+
+
+            <div class="match-divider"></div>
+
+
+            <!-- PARTICIPANTS -->
+            <div class="match-details">
+
+                <div class="match-lost">
+
+                    <span class="match-label">
+                        CLAIMANT
+                    </span>
+
+                    <h3>
+                        {{ claim_request.claimant.name }}
+                    </h3>
+
+                    <p>
+                        Person who reported the item as lost.
+                    </p>
+
+                </div>
+
+
+                <div class="match-arrow">
+                    ↔
+                </div>
+
+
+                <div class="match-found">
+
+                    <span class="match-label">
+                        FINDER
+                    </span>
+
+                    <h3>
+                        {{ claim_request.finder.name }}
+                    </h3>
+
+                    <p>
+                        Person who reported finding the item.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- SECURITY NOTICE -->
+            <div class="match-privacy">
+
+                <span>🔐</span>
+
+                <div>
+                    <strong>
+                        End-to-end access control
+                    </strong>
+
+                    <p>
+                        Your messages are linked to this specific
+                        verification request. Other SecureFind users
+                        cannot access this conversation.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <!-- MESSAGE AREA -->
+            <div class="messages-container">
+
+                {% if messages %}
+
+                    <div class="messages-list">
+
+                        {% for message in messages %}
+
+                            <div
+                                class="message-wrapper
+                                {% if message.sender_user_id == current_user_id %}
+                                    message-own
+                                {% else %}
+                                    message-other
+                                {% endif %}"
+                            >
+
+                                <div class="message-bubble">
+
+                                    <div class="message-sender">
+
+                                        {% if message.sender_user_id == current_user_id %}
+                                            You
+                                        {% else %}
+                                            {% if message.sender_user_id == claim_request.claimant_user_id %}
+                                                {{ claim_request.claimant.name }}
+                                            {% else %}
+                                                {{ claim_request.finder.name }}
+                                            {% endif %}
+                                        {% endif %}
+
+                                    </div>
+
+                                    <div class="message-body">
+                                        {{ message.body }}
+                                    </div>
+
+                                    <div class="message-time">
+                                        {{ message.created_at.strftime("%d %b %Y, %I:%M %p") }}
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                {% else %}
+
+                    <div class="messages-empty">
+
+                        <div class="empty-icon">
+                            💬
+                        </div>
+
+                        <h2>
+                            No messages yet.
+                        </h2>
+
+                        <p>
+                            Start the conversation with the other
+                            participant.
+                        </p>
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+
+            <!-- MESSAGE FORM -->
+            <div class="message-compose">
+
+                <form
+                    method="POST"
+                    action="{{
+                        url_for(
+                            'claim.messages',
+                            request_id=claim_request.id
+                        )
+                    }}"
+                >
+
+                    <!-- CSRF PROTECTION -->
+                    <input
+                        type="hidden"
+                        name="csrf_token"
+                        value="{{ csrf_token() }}"
+                    >
+
+                    <div class="message-input-wrapper">
+
+                        <textarea
+                            name="body"
+                            rows="3"
+                            maxlength="2000"
+                            placeholder="Write a message..."
+                            required
+                        ></textarea>
+
+                        <button
+                            type="submit"
+                            class="verification-button"
+                        >
+                            Send Message
+                            <span>→</span>
+                        </button>
+
+                    </div>
+
+                    <div class="message-compose-footer">
+
+                        <span>
+                            🔒 Private conversation
+                        </span>
+
+                        <span>
+                            Maximum 2000 characters
+                        </span>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </article>
+
+
+        <!-- BOTTOM NAVIGATION -->
+        <div class="matches-bottom">
+
+            <a
+                href="{{ url_for('auth.dashboard') }}"
+                class="matches-back"
+            >
+                ← Back to Dashboard
+            </a>
+
+            <a
+                href="{{ url_for('reports.my_reports') }}"
+                class="matches-reports"
+            >
+                My Reports →
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}
