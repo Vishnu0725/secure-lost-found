@@ -24,7 +24,23 @@ limiter = Limiter(
 
 
 def create_app():
-    app = Flask(__name__)
+
+    # --------------------------------------------------
+    # APP INSTANCE PATH
+    # --------------------------------------------------
+
+    # Vercel's deployment filesystem is read-only.
+    # Use /tmp for Flask's instance directory when
+    # running with the hosted PostgreSQL database.
+    database_url = os.getenv("DATABASE_URL")
+
+    if database_url:
+        app = Flask(
+            __name__,
+            instance_path="/tmp/securefind-instance"
+        )
+    else:
+        app = Flask(__name__)
 
     # --------------------------------------------------
     # SECURITY
@@ -92,12 +108,8 @@ def create_app():
     # DATABASE
     # --------------------------------------------------
 
-    # Use Neon PostgreSQL when DATABASE_URL is available
-    # (for example, on Vercel).
-    #
-    # Fall back to local SQLite when DATABASE_URL is not set.
-    database_url = os.getenv("DATABASE_URL")
-
+    # Use Neon PostgreSQL when DATABASE_URL is available.
+    # Fall back to local SQLite during local development.
     if database_url:
         app.config["SQLALCHEMY_DATABASE_URI"] = database_url
     else:
