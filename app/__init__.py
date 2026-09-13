@@ -88,16 +88,24 @@ def create_app():
 
         return response
 
-
     # --------------------------------------------------
     # DATABASE
     # --------------------------------------------------
 
-    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///securefind.db"
+    # Use Neon PostgreSQL when DATABASE_URL is available
+    # (for example, on Vercel).
+    #
+    # Fall back to local SQLite when DATABASE_URL is not set.
+    database_url = os.getenv("DATABASE_URL")
+
+    if database_url:
+        app.config["SQLALCHEMY_DATABASE_URI"] = database_url
+    else:
+        app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///securefind.db"
+
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
     db.init_app(app)
-
 
     # --------------------------------------------------
     # REGISTER ROUTES
@@ -121,7 +129,6 @@ def create_app():
     from app.routes.claim import claim
     app.register_blueprint(claim)
 
-
     # --------------------------------------------------
     # IMPORT MODELS
     # --------------------------------------------------
@@ -133,14 +140,12 @@ def create_app():
     from app.models.claim import ClaimRequest
     from app.models.message import Message
 
-
     # --------------------------------------------------
     # CREATE DATABASE TABLES
     # --------------------------------------------------
 
     with app.app_context():
         db.create_all()
-
 
     # --------------------------------------------------
     # HOME PAGE
@@ -149,6 +154,5 @@ def create_app():
     @app.route("/")
     def home():
         return render_template("home.html")
-
 
     return app
