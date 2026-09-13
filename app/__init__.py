@@ -10,6 +10,7 @@ from flask_limiter.util import get_remote_address
 db = SQLAlchemy()
 csrf = CSRFProtect()
 
+
 # --------------------------------------------------
 # RATE LIMITING
 # --------------------------------------------------
@@ -24,23 +25,7 @@ limiter = Limiter(
 
 
 def create_app():
-
-    # --------------------------------------------------
-    # APP INSTANCE PATH
-    # --------------------------------------------------
-
-    # Vercel's deployment filesystem is read-only.
-    # Use /tmp for Flask's instance directory when
-    # running with the hosted PostgreSQL database.
-    database_url = os.getenv("DATABASE_URL")
-
-    if database_url:
-        app = Flask(
-            __name__,
-            instance_path="/tmp/securefind-instance"
-        )
-    else:
-        app = Flask(__name__)
+    app = Flask(__name__)
 
     # --------------------------------------------------
     # SECURITY
@@ -84,7 +69,9 @@ def create_app():
 
         response.headers["X-Frame-Options"] = "DENY"
 
-        response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+        response.headers["Referrer-Policy"] = (
+            "strict-origin-when-cross-origin"
+        )
 
         response.headers["Permissions-Policy"] = (
             "camera=(), microphone=(), geolocation=()"
@@ -108,12 +95,31 @@ def create_app():
     # DATABASE
     # --------------------------------------------------
 
-    # Use Neon PostgreSQL when DATABASE_URL is available.
-    # Fall back to local SQLite during local development.
+    database_url = os.getenv("DATABASE_URL")
+
     if database_url:
+        # Neon/Vercel provides a PostgreSQL URL.
+        # Explicitly use the psycopg 3 SQLAlchemy driver.
+        if database_url.startswith("postgres://"):
+            database_url = database_url.replace(
+                "postgres://",
+                "postgresql+psycopg://",
+                1
+            )
+        elif database_url.startswith("postgresql://"):
+            database_url = database_url.replace(
+                "postgresql://",
+                "postgresql+psycopg://",
+                1
+            )
+
         app.config["SQLALCHEMY_DATABASE_URI"] = database_url
+
     else:
-        app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///securefind.db"
+        # Local development fallback.
+        app.config["SQLALCHEMY_DATABASE_URI"] = (
+            "sqlite:///securefind.db"
+        )
 
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
